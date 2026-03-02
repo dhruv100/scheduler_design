@@ -7,12 +7,20 @@ MEMORY
 SECTIONS
 {
     .text : {
+        . = ALIGN(4);      /* Ensure code ends on a word boundary */
         *(.vectors*)
         *(.text*)
+        . = ALIGN(4);      /* Ensure _sidata starts on a word boundary */
     } > MEM
 
-    .data :{
-       *(.data*)
-    } > RAM
+    /* Use LOADADDR to get the address in MEM where .data is stored */
+    _sidata = LOADADDR(.data); 
 
+    .data : {
+        . = ALIGN(4);
+        _sdata = .;
+        *(.data*)
+        . = ALIGN(4);
+        _edata = .;
+    } > RAM AT > MEM
 }

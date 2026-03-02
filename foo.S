@@ -15,6 +15,21 @@ vector_table:
     .align 1
     .type reset_handler, %function
 reset_handler:
+    // loading values into RAM
+    ldr r0, =_sidata // start of Load memory address
+    ldr r1, =_sdata // start
+    ldr r2, =_edata
+copy_loop:
+    CMP r1, r2
+    bge done_copy
+    ldr r4 ,[r0]
+    str r4, [r1]
+    add r0, r0, #4
+    add r1, r1, #4
+    b copy_loop
+
+done_copy:
+    // <--------Timer Driver Initialization --------->
     // loading values into registers
     ldr r0, =SYST_CSR
     ldr r1, =SYST_RVR
